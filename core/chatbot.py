@@ -1,24 +1,27 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
+from chains.rag_chain import conversational_rag_chain
 
-from config.settings import settings
-from prompts.chat_prompt import chat_prompt
+# =====================================================
+# Generate Response
+# =====================================================
 
+def generate_response(question: str, session_id: str) -> str:
+    """
+    Generates response using the Conversational
+    RAG Chain with chat history.
+    """
 
-llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash",
-    google_api_key=settings.GOOGLE_API_KEY,
-    temperature=0.7,
-)
-
-
-def generate_response(question: str):
-
-    chain = chat_prompt | llm
-
-    response = chain.invoke(
-        {
-            "question": question,
+    response = conversational_rag_chain.invoke(
+        {"input": question},
+        config={
+            "configurable": {
+                "session_id": session_id
+            }
         }
     )
 
-    return response.content
+    # Debug Output
+    print("\n========== FULL RESPONSE ==========")
+    print(response)
+    print("===================================\n")
+
+    return response["answer"]
