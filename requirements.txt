@@ -15,6 +15,6 @@ pypdf==6.0.0
 
 python-dotenv==1.1.1
 
-pydantic==2.11.7
+pydantic==2.10.6
 
 protobuf>=5.29.0
