@@ -23,7 +23,7 @@ llm = ChatGoogleGenerativeAI(
     model=settings.MODEL_NAME,
     google_api_key=settings.GOOGLE_API_KEY,
     temperature=settings.TEMPERATURE,
-    request_timeout=60,
+    timeout=60,
 )
 
 # =====================================================
