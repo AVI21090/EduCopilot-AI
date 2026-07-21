@@ -1,11 +1,26 @@
 from pypdf import PdfReader
 
 
+# =====================================================
+# PDF Loader
+# =====================================================
+
 def load_pdf(uploaded_file):
     """
-    Loads the uploaded PDF and returns a PdfReader object.
+    Safely loads an uploaded PDF file.
     """
 
-    pdf = PdfReader(uploaded_file)
+    try:
 
-    return pdf
+        pdf = PdfReader(uploaded_file)
+
+        if not pdf.pages:
+            raise ValueError("The uploaded PDF contains no pages.")
+
+        return pdf
+
+    except Exception as e:
+
+        raise ValueError(
+            f"Unable to read the uploaded PDF: {str(e)}"
+        )

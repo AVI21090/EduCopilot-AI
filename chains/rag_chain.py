@@ -3,16 +3,17 @@ from langchain.chains import (
     create_retrieval_chain,
 )
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from config.settings import settings
+from memory.chat_memory import get_session_history
 from prompts.chat_prompt import (
     chat_prompt,
     contextualize_q_prompt,
 )
 from vectorstore.chroma_store import get_retriever
+
 
 # =====================================================
 # Gemini LLM
@@ -22,17 +23,14 @@ llm = ChatGoogleGenerativeAI(
     model=settings.MODEL_NAME,
     google_api_key=settings.GOOGLE_API_KEY,
     temperature=settings.TEMPERATURE,
+    request_timeout=60,
 )
 
 # =====================================================
-# Base Retriever
+# Retriever
 # =====================================================
 
 retriever = get_retriever()
-
-# =====================================================
-# History Aware Retriever
-# =====================================================
 
 history_aware_retriever = create_history_aware_retriever(
     llm=llm,
@@ -50,7 +48,7 @@ document_chain = create_stuff_documents_chain(
 )
 
 # =====================================================
-# Conversational Retrieval Chain
+# Retrieval Chain
 # =====================================================
 
 rag_chain = create_retrieval_chain(
@@ -59,23 +57,12 @@ rag_chain = create_retrieval_chain(
 )
 
 # =====================================================
-# Chat History Store
-# =====================================================
-
-store = {}
-
-def get_session_history(session_id: str):
-    if session_id not in store:
-        store[session_id] = InMemoryChatMessageHistory()
-    return store[session_id]
-
-# =====================================================
 # Conversational RAG Chain
 # =====================================================
 
 conversational_rag_chain = RunnableWithMessageHistory(
-    rag_chain,
-    get_session_history,
+    runnable=rag_chain,
+    get_session_history=get_session_history,
     input_messages_key="input",
     history_messages_key="chat_history",
     output_messages_key="answer",

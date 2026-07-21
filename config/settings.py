@@ -3,30 +3,63 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 class Settings:
     """
     Stores all project configuration variables.
     """
 
-    # Google Gemini
+    # =====================================================
+    # Application
+    # =====================================================
+
+    APP_NAME = "EduCopilot AI"
+    APP_VERSION = "1.0.0"
+
+    # =====================================================
+    # Gemini
+    # =====================================================
+
     GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-
-    # Lite model uses less quota than flash
-    MODEL_NAME = "gemini-2.5-flash-lite"
-
+    MODEL_NAME = "gemini-2.5-flash"
     TEMPERATURE = 0
 
+    # =====================================================
     # Embedding Model
+    # =====================================================
+
     EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
+    # =====================================================
     # Text Splitter
+    # =====================================================
+
     CHUNK_SIZE = 1000
     CHUNK_OVERLAP = 200
 
+    # =====================================================
     # ChromaDB
+    # =====================================================
+
     CHROMA_DB_PATH = "chroma_db"
     COLLECTION_NAME = "educopilot"
+
+    # =====================================================
+    # Retriever
+    # =====================================================
+
     RETRIEVER_K = 3
+    FETCH_K = 10
+    LAMBDA_MULT = 0.5
+    SCORE_THRESHOLD = 0.30
+
+    # =====================================================
+    # UI
+    # =====================================================
+
+    MAX_CHAT_HISTORY = 50
+    SHOW_SOURCE_PAGES = True
+    SHOW_WELCOME_MESSAGE = True
 
 
 settings = Settings()

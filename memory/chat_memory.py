@@ -1,22 +1,16 @@
 from langchain_core.chat_history import InMemoryChatMessageHistory
 
-# ==========================================================
-# In-Memory Chat Store
-# ==========================================================
-# Stores chat history for every user session.
-# Later we can replace this with Redis, MongoDB, or PostgreSQL
-# without changing the chatbot code.
-# ==========================================================
+# =====================================================
+# Chat History Store
+# =====================================================
 
-store = {}
+store: dict[str, InMemoryChatMessageHistory] = {}
 
 
 def get_session_history(session_id: str) -> InMemoryChatMessageHistory:
     """
-    Returns the chat history for the given session.
-
-    If the session does not exist,
-    a new chat history is created automatically.
+    Returns chat history for the given session.
+    Creates a new history if the session doesn't exist.
     """
 
     if session_id not in store:
