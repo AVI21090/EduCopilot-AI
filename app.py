@@ -148,38 +148,38 @@ with st.sidebar:
         accept_multiple_files=True,
     )
 
-    if uploaded_files:
+if uploaded_files:
 
-        try:
+    try:
 
-            progress = st.progress(0)
+        progress = st.progress(0)
 
-            total = len(uploaded_files)
+        total = len(uploaded_files)
 
-            for index, file in enumerate(uploaded_files, start=1):
+        for index, file in enumerate(uploaded_files, start=1):
 
-                with st.spinner(f"Processing {file.name}"):
+            with st.spinner(f"Processing {file.name}"):
 
-                    pdf = load_pdf(file)
+                pdf = load_pdf(file)
 
-                    docs = split_pdf(pdf, file.name)
+                docs = split_pdf(pdf, file.name)
 
-                    create_vector_store(docs)
+                create_vector_store(docs)
 
-                    progress.progress(index / total)
+                progress.progress(index / total)
 
-            st.session_state.pdf_uploaded = True
+        st.session_state.pdf_uploaded = True
 
-            st.session_state.uploaded_pdfs = [
-                file.name for file in uploaded_files
-            ]
+        st.session_state.uploaded_pdfs = [
+            file.name for file in uploaded_files
+        ]
 
-            st.success(f"✅ {total} PDF(s) uploaded successfully!")
+        st.success(f"✅ {total} PDF(s) uploaded successfully!")
 
-        except Exception as e:
+    except Exception as e:
 
-            st.error(str(e))
-
+        st.error(str(e))
+    
     st.divider()
 
     # ---------------- Knowledge Base ---------------- #
