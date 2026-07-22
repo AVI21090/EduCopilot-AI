@@ -1,4 +1,5 @@
 import os
+import tempfile
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -41,7 +42,12 @@ class Settings:
     # ChromaDB
     # =====================================================
 
-    CHROMA_DB_PATH = "chroma_db"
+    # Streamlit Cloud writable directory
+    CHROMA_DB_PATH = os.path.join(
+        tempfile.gettempdir(),
+        "chroma_db"
+    )
+
     COLLECTION_NAME = "educopilot"
 
     # =====================================================
