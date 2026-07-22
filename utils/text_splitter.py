@@ -39,17 +39,17 @@ def split_pdf(pdf, filename="Unknown PDF"):
         )
 
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=settings.CHUNK_SIZE,
-        chunk_overlap=settings.CHUNK_OVERLAP,
-        length_function=len,
-        separators=[
-            "\n\n",
-            "\n",
-            ". ",
-            " ",
-            "",
-        ],
-    )
+    chunk_size=600,
+    chunk_overlap=100,
+    length_function=len,
+    separators=[
+        "\n\n",
+        "\n",
+        ". ",
+        " ",
+        "",
+    ],
+)
 
     chunks = splitter.split_documents(documents)
 

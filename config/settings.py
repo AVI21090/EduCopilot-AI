@@ -22,7 +22,7 @@ class Settings:
     # =====================================================
 
     GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-    MODEL_NAME = "gemini-2.5-flash"
+    MODEL_NAME = "gemini-2.0-flash"
     TEMPERATURE = 0
 
     # =====================================================
@@ -35,8 +35,8 @@ class Settings:
     # Text Splitter
     # =====================================================
 
-    CHUNK_SIZE = 1000
-    CHUNK_OVERLAP = 200
+    CHUNK_SIZE = 600
+    CHUNK_OVERLAP = 100
 
     # =====================================================
     # ChromaDB
