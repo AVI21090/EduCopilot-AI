@@ -14,7 +14,8 @@ from prompts.chat_prompt import (
 )
 from vectorstore.chroma_store import get_retriever
 
-
+print("API Key Loaded:", bool(settings.GOOGLE_API_KEY))
+print("Model:", settings.MODEL_NAME)
 llm = ChatGoogleGenerativeAI(
     model=settings.MODEL_NAME,
     google_api_key=settings.GOOGLE_API_KEY,

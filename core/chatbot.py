@@ -1,4 +1,5 @@
 import time
+import traceback
 
 from google.api_core.exceptions import ResourceExhausted
 
@@ -73,12 +74,16 @@ def generate_response(question: str, session_id: str):
 
     except Exception as e:
 
-        return {
-            "answer": f"❌ Error: {str(e)}",
-            "pages": [],
-            "response_time": 0,
-            "documents_used": 0,
-        }
+     print("========== FULL ERROR ==========")
+    traceback.print_exc()
+    print("================================")
+
+    return {
+        "answer": f"❌ {type(e).__name__}: {str(e)}",
+        "pages": [],
+        "response_time": 0,
+        "documents_used": 0,
+    }
 
 
 # =====================================================
