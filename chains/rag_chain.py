@@ -15,10 +15,6 @@ from prompts.chat_prompt import (
 from vectorstore.chroma_store import get_retriever
 
 
-# =====================================================
-# Gemini LLM
-# =====================================================
-
 llm = ChatGoogleGenerativeAI(
     model=settings.MODEL_NAME,
     google_api_key=settings.GOOGLE_API_KEY,
@@ -26,44 +22,31 @@ llm = ChatGoogleGenerativeAI(
     timeout=60,
 )
 
-# =====================================================
-# Retriever
-# =====================================================
 
-retriever = get_retriever()
+def get_conversational_chain():
 
-history_aware_retriever = create_history_aware_retriever(
-    llm=llm,
-    retriever=retriever,
-    prompt=contextualize_q_prompt,
-)
+    retriever = get_retriever()
 
-# =====================================================
-# Document Chain
-# =====================================================
+    history_aware_retriever = create_history_aware_retriever(
+        llm=llm,
+        retriever=retriever,
+        prompt=contextualize_q_prompt,
+    )
 
-document_chain = create_stuff_documents_chain(
-    llm=llm,
-    prompt=chat_prompt,
-)
+    document_chain = create_stuff_documents_chain(
+        llm=llm,
+        prompt=chat_prompt,
+    )
 
-# =====================================================
-# Retrieval Chain
-# =====================================================
+    rag_chain = create_retrieval_chain(
+        retriever=history_aware_retriever,
+        combine_docs_chain=document_chain,
+    )
 
-rag_chain = create_retrieval_chain(
-    retriever=history_aware_retriever,
-    combine_docs_chain=document_chain,
-)
-
-# =====================================================
-# Conversational RAG Chain
-# =====================================================
-
-conversational_rag_chain = RunnableWithMessageHistory(
-    runnable=rag_chain,
-    get_session_history=get_session_history,
-    input_messages_key="input",
-    history_messages_key="chat_history",
-    output_messages_key="answer",
-)
+    return RunnableWithMessageHistory(
+        runnable=rag_chain,
+        get_session_history=get_session_history,
+        input_messages_key="input",
+        history_messages_key="chat_history",
+        output_messages_key="answer",
+    )

@@ -3,7 +3,7 @@ import time
 from google.api_core.exceptions import ResourceExhausted
 
 from chains.rag_chain import (
-    conversational_rag_chain,
+    get_conversational_chain,
     llm,
 )
 
@@ -17,9 +17,9 @@ def generate_response(question: str, session_id: str):
 
         start_time = time.time()
 
-        print("STEP 1: Calling RAG Chain...")
+        chain = get_conversational_chain()
 
-        response = conversational_rag_chain.invoke(
+        response = chain.invoke(
             {"input": question},
             config={
                 "configurable": {
@@ -27,8 +27,6 @@ def generate_response(question: str, session_id: str):
                 }
             },
         )
-
-        print("STEP 2: RAG Chain Finished")
 
         response_time = round(time.time() - start_time, 2)
 
@@ -73,14 +71,43 @@ def generate_response(question: str, session_id: str):
             "documents_used": 0,
         }
 
-    except Exception:
+    except Exception as e:
 
         return {
-            "answer": (
-                "❌ Something went wrong while generating the response.\n\n"
-                "Please try again."
-            ),
+            "answer": f"❌ Error: {str(e)}",
             "pages": [],
             "response_time": 0,
             "documents_used": 0,
         }
+
+
+# =====================================================
+# Conversation Summary
+# =====================================================
+
+def summarize_conversation(chat_history):
+    """
+    Generates a summary of the conversation.
+    """
+
+    if not chat_history:
+        return "No conversation available."
+
+    conversation = ""
+
+    for sender, message in chat_history:
+        conversation += f"{sender}: {message['answer']}\n"
+
+    prompt = f"""
+Summarize the following conversation in 5-8 concise bullet points.
+
+Conversation:
+{conversation}
+"""
+
+    try:
+        response = llm.invoke(prompt)
+        return response.content.strip()
+
+    except Exception:
+        return "Unable to generate conversation summary."
