@@ -16,6 +16,9 @@ DB_PATH = settings.CHROMA_DB_PATH
 def get_chroma_client():
     os.makedirs(DB_PATH, exist_ok=True)
 
+    # Clear stale ChromaDB client cache
+    chromadb.api.client.SharedSystemClient.clear_system_cache()
+
     return chromadb.PersistentClient(
         path=DB_PATH,
         settings=Settings(anonymized_telemetry=False),
