@@ -14,6 +14,7 @@ DB_PATH = settings.CHROMA_DB_PATH
 
 
 def get_chroma_client():
+    """Create a persistent ChromaDB client."""
     os.makedirs(DB_PATH, exist_ok=True)
 
     # Clear stale ChromaDB client cache
@@ -21,13 +22,18 @@ def get_chroma_client():
 
     return chromadb.PersistentClient(
         path=DB_PATH,
-        settings=Settings(anonymized_telemetry=False),
+        settings=Settings(
+            anonymized_telemetry=False
+        ),
     )
 
 
 def create_vector_store(documents):
+    """Create a vector store and add document chunks."""
     if not documents:
-        raise ValueError("No documents provided to create the vector store.")
+        raise ValueError(
+            "No documents provided to create the vector store."
+        )
 
     client = get_chroma_client()
 
@@ -43,6 +49,7 @@ def create_vector_store(documents):
 
 
 def load_vector_store():
+    """Load the existing vector store if it contains documents."""
     if not os.path.isdir(DB_PATH):
         return None
 
@@ -67,6 +74,7 @@ def load_vector_store():
 
 
 def get_retriever():
+    """Return the retriever for the existing vector store."""
     vector_store = load_vector_store()
 
     if vector_store is None:
@@ -85,9 +93,13 @@ def get_retriever():
 
 
 def clear_vector_store():
+    """Delete the existing vector store and recreate its directory."""
     if os.path.exists(DB_PATH):
         shutil.rmtree(DB_PATH)
 
     os.makedirs(DB_PATH, exist_ok=True)
+
+    # Clear cached clients after deleting the database directory
+    chromadb.api.client.SharedSystemClient.clear_system_cache()
 
     return True
