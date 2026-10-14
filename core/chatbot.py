@@ -1,3 +1,4 @@
+
 import time
 import traceback
 
@@ -13,11 +14,9 @@ def generate_response(question: str, session_id: str):
     """
     Generates an AI response along with source page numbers.
     """
+    start_time = time.time()
 
     try:
-
-        start_time = time.time()
-
         chain = get_conversational_chain()
 
         response = chain.invoke(
@@ -40,11 +39,9 @@ def generate_response(question: str, session_id: str):
             )
 
         pages = []
-
         documents = response.get("context", [])
 
         for doc in documents:
-
             page = doc.metadata.get("page")
 
             if page is not None:
@@ -60,6 +57,7 @@ def generate_response(question: str, session_id: str):
         }
 
     except ResourceExhausted:
+        traceback.print_exc()
 
         return {
             "answer": (
@@ -68,22 +66,21 @@ def generate_response(question: str, session_id: str):
                 "or use another Gemini API key."
             ),
             "pages": [],
-            "response_time": 0,
+            "response_time": round(time.time() - start_time, 2),
             "documents_used": 0,
         }
 
     except Exception as e:
+        print("========== FULL ERROR ==========")
+        traceback.print_exc()
+        print("================================")
 
-     print("========== FULL ERROR ==========")
-    traceback.print_exc()
-    print("================================")
-
-    return {
-        "answer": f"❌ {type(e).__name__}: {str(e)}",
-        "pages": [],
-        "response_time": 0,
-        "documents_used": 0,
-    }
+        return {
+            "answer": f"❌ {type(e).__name__}: {str(e)}",
+            "pages": [],
+            "response_time": round(time.time() - start_time, 2),
+            "documents_used": 0,
+        }
 
 
 # =====================================================
@@ -94,7 +91,6 @@ def summarize_conversation(chat_history):
     """
     Generates a summary of the conversation.
     """
-
     if not chat_history:
         return "No conversation available."
 
@@ -115,4 +111,5 @@ Conversation:
         return response.content.strip()
 
     except Exception:
+        traceback.print_exc()
         return "Unable to generate conversation summary."
