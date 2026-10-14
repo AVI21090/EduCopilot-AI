@@ -1,4 +1,3 @@
-```python
 import os
 import tempfile
 from dotenv import load_dotenv
@@ -7,9 +6,7 @@ load_dotenv()
 
 
 class Settings:
-    """
-    Stores all project configuration variables.
-    """
+    """Stores all project configuration variables."""
 
     # Application
     APP_NAME = "EduCopilot AI"
@@ -47,4 +44,3 @@ class Settings:
 
 
 settings = Settings()
-```
